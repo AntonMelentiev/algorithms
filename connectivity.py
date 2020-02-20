@@ -1,4 +1,8 @@
 class Connectivity:
+    def __init__(self):
+        self.data = None
+        self.length = None
+
     def union(self, element, to_element):
         raise NotImplementedError
 
@@ -21,6 +25,7 @@ class Connectivity:
 
 class QuickFind(Connectivity):
     def __init__(self, length):
+        super().__init__()
         self.length = length
         self.data = [i for i in range(length)]
 
@@ -41,6 +46,7 @@ class QuickFind(Connectivity):
 
 class QuickUnion(Connectivity):
     def __init__(self, length):
+        super().__init__()
         self.length = length
         self.data = [i for i in range(length)]
 
