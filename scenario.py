@@ -1,7 +1,8 @@
 from connectivity import QuickFind, QuickUnion, QuickUnionWeighted
+from sort_and_shuffle import SortAndShuffle
 
 
-def scenario_1(find_object):
+def connectivity_scenario_1(find_object):
     find_object.show_connection(0, 3)
 
     find_object.union(0, 3)
@@ -21,6 +22,25 @@ def scenario_1(find_object):
     find_object.show_connection(5, 4)
 
 
-# scenario_1(find_object=QuickFind(length=10))
-scenario_1(find_object=QuickUnion(length=10))
-scenario_1(find_object=QuickUnionWeighted(length=10))
+# connectivity_scenario_1(find_object=QuickFind(length=10))
+# connectivity_scenario_1(find_object=QuickUnion(length=10))
+# connectivity_scenario_1(find_object=QuickUnionWeighted(length=10))
+
+def sort_scenario_1(a):
+    shell_sort = SortAndShuffle()
+    b = shell_sort.knuth_shuffle(list(range(a)))
+
+    print(b)
+    print(shell_sort.shell_sort(b))
+
+
+def sort_scenario_2(a):
+    shell_sort = SortAndShuffle()
+    b = shell_sort.knuth_shuffle(list(range(a)))
+
+    print(b)
+    print(shell_sort.merge_sort(b))
+
+
+# sort_scenario_1(17)
+# sort_scenario_2(17)
