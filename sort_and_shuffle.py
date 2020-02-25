@@ -4,7 +4,8 @@ from random import randint
 
 class SortAndShuffle:
     def __init__(self):
-        self.CUTOFF = 7
+        self.CUTOFF_MERGE_SORT = 7
+        self.CUTOFF_QUICK_SORT = 9
 
     @staticmethod
     def _exchange(data: list, i: int, j: int):
@@ -77,7 +78,7 @@ class SortAndShuffle:
         if high <= low:
             return
 
-        if high - low <= self.CUTOFF:
+        if high - low <= self.CUTOFF_MERGE_SORT:
             self._insertion_sort(data, low, high)
             return
 
@@ -104,3 +105,75 @@ class SortAndShuffle:
                 low += size * 2
 
             size *= 2
+
+    def _partitioning(self, data: list, low: int, high: int):
+        key_item = data[low]
+        i = low + 1
+        j = high
+
+        while True:
+
+            while True:
+                if data[i] > key_item:
+                    break
+                if i == high:
+                    break
+                i += 1
+
+            while True:
+                if data[j] < key_item:
+                    break
+                if j == low:
+                    break
+                j -= 1
+
+            if i >= j:
+                break
+
+            self._exchange(data, i, j)
+
+        self._exchange(data, low, j)
+        return j
+
+    def _quick_sort(self, data: list, low: int, high: int):
+        if high <= low:
+            return
+
+        if high - low <= self.CUTOFF_QUICK_SORT:
+            self._insertion_sort(data, low, high)
+            return
+
+        j = self._partitioning(data, low, high)
+        self._quick_sort(data, low, j-1)
+        self._quick_sort(data, j+1, high)
+
+    def quick_sort(self, data: list):
+        self.knuth_shuffle(data)  # shuffle needed for performance guarantee
+        self._quick_sort(data, 0, len(data) - 1)
+
+    def _three_way_quick_sort(self, data: list, low: int, high: int):
+        if high <= low:
+            return
+
+        i, lt, gt = low, low, high
+        key_item = data[low]
+
+        while i <= gt:
+            if data[i] < key_item:
+                self._exchange(data, lt, i)
+                i += 1
+                lt += 1
+
+            elif data[i] > key_item:
+                self._exchange(data, i, gt)
+                gt -= 1
+
+            else:
+                i += 1
+
+        self._three_way_quick_sort(data, low, lt - 1)
+        self._three_way_quick_sort(data, gt + 1, high)
+
+    def three_way_quick_sort(self, data: list):
+        self._three_way_quick_sort(data, 0, len(data) - 1)
+
