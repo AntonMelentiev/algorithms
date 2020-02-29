@@ -84,3 +84,32 @@ class QuickUnionWeighted(QuickUnion):
         else:
             self.data[to_element_root] = element_root
             self.size_array[element_root] += self.size_array[to_element_root]
+
+
+if __name__ == "__main__":
+    def connectivity_scenario(find_object):
+        print('--- ' * 20)
+        print(f'Scenario for {find_object.__class__.__name__}')
+        print('--- ' * 20)
+        find_object.show_connection(0, 3)
+
+        find_object.union(0, 3)
+        find_object.show_connection(0, 3)
+
+        find_object.drop(find_object)
+        find_object.show_connection(0, 3)
+
+        find_object.union(0, 3)
+        print(find_object)
+        find_object.union(0, 4)
+        print(find_object)
+        find_object.union(3, 5)
+        print(find_object)
+        find_object.union(9, 1)
+        print(find_object)
+        find_object.show_connection(5, 4)
+        print('--- ' * 20)
+
+    connectivity_scenario(find_object=QuickFind(length=10))
+    connectivity_scenario(find_object=QuickUnion(length=10))
+    connectivity_scenario(find_object=QuickUnionWeighted(length=10))

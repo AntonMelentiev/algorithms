@@ -1,4 +1,5 @@
-from copy import copy
+import time
+from copy import copy, deepcopy
 from random import randint
 
 
@@ -101,7 +102,7 @@ class SortAndShuffle:
             low = 0
 
             while low < len(data) - size:
-                self._merge(data, low=low, mid=low + size - 1, high=min(low + size * 2 + 1, len(data) - 1))
+                self._merge(data, low=low, mid=low + size - 1, high=min(low + size * 2 - 1, len(data) - 1))
                 low += size * 2
 
             size *= 2
@@ -177,3 +178,172 @@ class SortAndShuffle:
     def three_way_quick_sort(self, data: list):
         self._three_way_quick_sort(data, 0, len(data) - 1)
 
+
+if __name__ == '__main__':
+    def is_sorted(a: list):
+        for i in range(1, len(a)):
+            if a[i] < a[i - 1]:
+                return False
+        return True
+
+    def time_it(func, data: list):
+        full_time = 0
+
+        for _ in range(10):
+            new_data = deepcopy(data)
+            start = time.time()
+            func(new_data)
+            end = time.time()
+            full_time += (end - start)
+
+            if not is_sorted(new_data):
+                print(f'"{func.__name__}" doesn\'t sorts list properly')
+
+        full_time /= 10
+        rounded_time = round(full_time, 5)
+        print(f'Rounded average time out of 10 executions of "{func.__name__}":'.ljust(70), end='')
+        print(f' {rounded_time} seconds')
+
+
+    def sort_scenario_1(a: int):
+        """
+        Make list of dimension 'a' shuffle it and then sort it using insertion sort algorithm.
+        Print shuffled list and then sorted list.
+        :param a: list dimension
+        :return: None
+        """
+        worker = SortAndShuffle()
+        b = worker.knuth_shuffle(list(range(a)))
+
+        print('--- ' * 22)
+        print(f'Sort with {worker.insertion_sort.__name__}')
+        print(b)
+        worker.insertion_sort(b)
+        print(b)
+        print('--- ' * 22)
+
+
+    def sort_scenario_2(a: int):
+        """
+        Make list of dimension 'a' shuffle it and then sort it using shell sort algorithm.
+        Print shuffled list and then sorted list.
+        :param a: list dimension
+        :return: None
+        """
+        worker = SortAndShuffle()
+        b = worker.knuth_shuffle(list(range(a)))
+
+        print('--- ' * 22)
+        print(f'Sort with {worker.shell_sort.__name__}')
+        print(b)
+        worker.shell_sort(b)
+        print(b)
+        print('--- ' * 22)
+
+
+    def sort_scenario_3(a: int):
+        """
+        Make list of dimension 'a' shuffle it and then sort it using merge sort algorithm.
+        Print shuffled list and then sorted list.
+        :param a: list dimension
+        :return: None
+        """
+        worker = SortAndShuffle()
+        b = worker.knuth_shuffle(list(range(a)))
+
+        print('--- ' * 22)
+        print(f'Sort with {worker.merge_sort.__name__}')
+        print(b)
+        worker.merge_sort(b)
+        print(b)
+        print('--- ' * 22)
+
+
+    def sort_scenario_4(a: int):
+        """
+        Make list of dimension 'a' shuffle it and then sort it using merge sort algorithm.
+        Print shuffled list and then sorted list.
+        :param a: list dimension
+        :return: None
+        """
+        worker = SortAndShuffle()
+        b = worker.knuth_shuffle(list(range(a)))
+
+        print('--- ' * 22)
+        print(f'Sort with {worker.merge_sort_bottom_up.__name__}')
+        print(b)
+        worker.merge_sort_bottom_up(b)
+        print(b)
+        print('--- ' * 22)
+
+
+    def sort_scenario_5(a: int):
+        """
+        Make list of dimension 'a' shuffle it and then sort it using quick sort algorithm.
+        Print shuffled list and then sorted list.
+        :param a: list dimension
+        :return: None
+        """
+        worker = SortAndShuffle()
+        b = worker.knuth_shuffle(list(range(a)))
+
+        print('--- ' * 22)
+        print(f'Sort with {worker.quick_sort.__name__}')
+        print(b)
+        worker.quick_sort(b)
+        print(b)
+        print('--- ' * 22)
+
+
+    def sort_scenario_6(a: int):
+        """
+        Make list of dimension 'a' shuffle it and then sort it using 3-way quick sort algorithm.
+        Print shuffled list and then sorted list.
+        :param a: list dimension
+        :return: None
+        """
+        worker = SortAndShuffle()
+        b = worker.knuth_shuffle(list(range(a)))
+
+        print('--- ' * 22)
+        print(f'Sort with {worker.three_way_quick_sort.__name__}')
+        print(b)
+        worker.three_way_quick_sort(b)
+        print(b)
+        print('--- ' * 22)
+
+
+    def sort_comparison():
+        '''
+        Compare time of different methods for 3_000 unique keys and 100 repeated keys randomly repeated 3_000 times.
+        '''
+
+        lists = [
+            SortAndShuffle().knuth_shuffle(list(range(3_000))),
+            [randint(1, 100) for _ in range(3_000)]
+        ]
+        funcs = [
+            SortAndShuffle().insertion_sort,
+            SortAndShuffle().shell_sort,
+            SortAndShuffle().merge_sort,
+            SortAndShuffle().merge_sort_bottom_up,
+            SortAndShuffle().quick_sort,
+            SortAndShuffle().three_way_quick_sort,
+        ]
+
+        print('Compare time of sort methods for 3000 unique keys and 100 unique keys randomly repeated 3000 times.')
+        for list_to_sort in lists:
+            print('--- ' * 22)
+            for func in funcs:
+                data = deepcopy(list_to_sort)
+                time_it(func, data)
+        print('--- ' * 22)
+
+
+    sort_scenario_1(17)
+    sort_scenario_2(17)
+    sort_scenario_3(17)
+    sort_scenario_4(17)
+    sort_scenario_5(17)
+    sort_scenario_6(17)
+    sort_comparison()
