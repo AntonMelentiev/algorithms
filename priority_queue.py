@@ -45,9 +45,9 @@ class PriorityQueue:
 
     def add_to_queue(self, item, priority):
 
-        queue_item = PriorityQueueItem(weight=priority, item=item)
+        item_to_queue = PriorityQueueItem(weight=priority, item=item)
 
-        self.queue.append(queue_item)
+        self.queue.append(item_to_queue)
         self.queue_size += 1
         self._swim(self.queue_size)
 
@@ -129,4 +129,3 @@ if __name__ == '__main__':
 
     print(f'Rounded average time out of 10 executions of "heap_sort":'.ljust(70), end='')
     print(f' {round(full_time / times, 5)} seconds')
-

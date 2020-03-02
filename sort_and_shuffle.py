@@ -1,5 +1,5 @@
 import time
-from copy import copy, deepcopy
+from copy import deepcopy
 from random import randint
 
 
@@ -310,9 +310,9 @@ if __name__ == '__main__':
 
 
     def sort_comparison():
-        '''
+        """
         Compare time of different methods for 3_000 unique keys and 100 repeated keys randomly repeated 3_000 times.
-        '''
+        """
 
         lists = [
             SortAndShuffle().knuth_shuffle(list(range(3_000))),
