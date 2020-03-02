@@ -180,11 +180,7 @@ class SortAndShuffle:
 
 
 if __name__ == '__main__':
-    def is_sorted(a: list):
-        for i in range(1, len(a)):
-            if a[i] < a[i - 1]:
-                return False
-        return True
+    from common import is_sorted
 
     def time_it(func, data: list):
         full_time = 0
