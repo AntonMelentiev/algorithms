@@ -72,8 +72,7 @@ class BinaryTree:
     def get_size(self):
         return getattr(self.root, 'size', 0)
 
-
-    def get_rank(self, key)
+    def get_rank(self, key):
         return self._get_rank(self.root, key)
 
     def _get_rank(self, node, key):
