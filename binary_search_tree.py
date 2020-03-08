@@ -197,14 +197,15 @@ if __name__ == '__main__':
     bt.display()
     print('--- ' * 27)
 
-    print('Minimum removed')
+    print('Remove minimum')
     bt.del_min()
     bt.display()
     print('--- ' * 27)
 
-    print(bt.get_floor(150))
-    print(bt.get_size())
-    print(bt.get_rank(150))
-    bt.put(150, 150)
+    print(f'How many keys in BT less than 500: {bt.get_rank(500)}')
+    print(f'Nearest lower key to 500: {bt.get_floor(500)}')
+    x = bt.get_floor(500) - 1
+    print(f'Add {x} to BT:')
+    bt.put(x, x)
     bt.display()
     print('--- '*27)
