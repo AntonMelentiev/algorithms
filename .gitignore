@@ -3,3 +3,6 @@
 
 # Temp file for local testing
 /_sandbox.py
+
+# virtual environment
+/.venv

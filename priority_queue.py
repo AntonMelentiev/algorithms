@@ -13,6 +13,58 @@ class PriorityQueue:
         self.queue.append(PriorityQueueItem(0, None))  # item with index 0 not used in this model
         self.queue_size = 0
 
+    # Display realisation adjasted from
+    # https://stackoverflow.com/questions/34012886/print-binary-tree-level-by-level-in-python/34014370
+
+    def display(self):
+        lines, _, _, _ = self._display_aux(1)
+        for line in lines:
+            print(line)
+
+    def _display_aux(self, id):
+        """Returns list of strings, width, height, and horizontal coordinate of the root."""
+        # No child.
+        if (id * 2 + 1 > self.queue_size) and (id * 2 > self.queue_size):
+            line = '%s (%s)' % (self.queue[id].weight, self.queue[id].item)
+            width = len(line)
+            height = 1
+            middle = width // 2
+            return [line], width, height, middle
+
+        # Only left child.
+        if id * 2 + 1 > self.queue_size:
+            lines, n, p, x = self._display_aux(id * 2)
+            s = '%s (%s)' % (self.queue[id].weight, self.queue[id].item)
+            u = len(s)
+            first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s
+            second_line = x * ' ' + '/' + (n - x - 1 + u) * ' '
+            shifted_lines = [line + u * ' ' for line in lines]
+            return [first_line, second_line] + shifted_lines, n + u, p + 2, n + u // 2
+
+        # Two children.
+        left, n, p, x = self._display_aux(id * 2)
+        right, m, q, y = self._display_aux(id * 2 + 1)
+        s = '%s (%s)' % (self.queue[id].weight, self.queue[id].item)
+        u = len(s)
+        first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s + y * '_' + (m - y) * ' '
+        second_line = x * ' ' + '/' + (n - x - 1 + u + y) * ' ' + '\\' + (m - y - 1) * ' '
+        if p < q:
+            left += [n * ' '] * (q - p)
+        elif q < p:
+            right += [m * ' '] * (p - q)
+        zipped_lines = zip(left, right)
+        lines = [first_line, second_line] + [a + u * ' ' + b for a, b in zipped_lines]
+        return lines, n + m + u, max(p, q) + 2, n + u // 2
+
+
+
+
+
+
+
+
+
+
     def _exchange(self, i: int, j: int):
         temp = self.queue[i]
         self.queue[i] = self.queue[j]
@@ -103,21 +155,23 @@ if __name__ == '__main__':
 
     pq_1 = PriorityQueue()
 
-    for _ in range(10):
+    for _ in range(15):
         pq_1.add_to_queue(item=randint(20, 25), priority=randint(1, 20))
 
-    print(f'Queue size: {pq_1.queue_size}')
-    for queue_item in pq_1.queue[1:]:
-        print(queue_item)
+    print(f'\nQueue size: {pq_1.queue_size}\n\n')
+    pq_1.display()
 
-    print('--- '*22)
+    print()
+    print('--- '*27)
 
     full_time = 0
     times = 10
+    size = 3_000
+
     for _ in range(times):
         pq_2 = PriorityQueue()
-        pq_2.make_queue_from_list(range(3_000))
-        # pq_2.make_queue_from_list([randint(1, 100) for _ in range(3_000)])
+        pq_2.make_queue_from_list(range(size))  # unique items
+        # pq_2.make_queue_from_list([randint(1, 100) for _ in range(size)])  # items with duplicated keys
 
         start = time.time()
         sorted_result = pq_2.get_sorted()
@@ -127,5 +181,7 @@ if __name__ == '__main__':
         if not is_sorted(sorted_result):
             print('Not sorted result!!!')
 
-    print(f'Rounded average time out of 10 executions of "heap_sort":'.ljust(70), end='')
+    print(f'Rounded average time out of 10 executions of "heap_sort" for {size} items:'.ljust(90), end='')
     print(f' {round(full_time / times, 5)} seconds')
+
+    print('--- '*27, end='\n\n')
