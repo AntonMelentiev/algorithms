@@ -2,7 +2,7 @@
 /.idea
 
 # Temp file for local testing
-/_sandbox.py
+/_sandbox*.py
 
 # virtual environment
 /.venv

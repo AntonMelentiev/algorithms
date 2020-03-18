@@ -14,15 +14,25 @@ class BinaryTree:
     def __init__(self):
         self.root = None
 
-    # Display realisation taken from
-    # https://stackoverflow.com/questions/34012886/print-binary-tree-level-by-level-in-python/34014370
     def display(self):
+        """
+        Print BinaryTree with good visualisation
+        Realisation taken from:
+        https://stackoverflow.com/questions/34012886/print-binary-tree-level-by-level-in-python/34014370
+
+        :return: None
+        """
         lines, _, _, _ = self._display_aux(self.root)
         for line in lines:
             print(line)
 
-    def _display_aux(self, node):
-        """Returns list of strings, width, height, and horizontal coordinate of the root."""
+    def _display_aux(self, node: BTElement):
+        """
+        Recursive method.
+        :param node: Element of tree
+        :return: list of strings, width, height, and horizontal coordinate of the root.
+        """
+
         # No child.
         if node.right_node is None and node.left_node is None:
             line = '%s' % node.key
@@ -66,8 +76,12 @@ class BinaryTree:
         lines = [first_line, second_line] + [a + u * ' ' + b for a, b in zipped_lines]
         return lines, n + m + u, max(p, q) + 2, n + u // 2
 
-
-    def _get_size(self, node):
+    def _get_size(self, node: BTElement):
+        """
+        Size of BT node
+        :param node: root element of sub-tree
+        :return: int: size of sub-tree
+        """
         return getattr(node, 'size', 0)
 
     def get(self, key: int, default=None):
