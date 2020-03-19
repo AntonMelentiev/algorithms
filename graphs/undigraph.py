@@ -1,31 +1,7 @@
-from dataclasses import dataclass, field
+from graphs.graph import Graph, Vertex
 
 
-@dataclass
-class Vertex:
-    id: int
-    adjencies: list = field(default_factory=list)
-    value: object = None
-
-
-def graph_from_data(data: list):
-    """
-    Example of input data: ['13', '0 5', '4 3', '0 1', '9 12', '6 4', '5 4', '0 2']
-    :param data: List of strings.
-                 First string - number of vertexes in graph.
-                 All subsequent strings - pairs of vertexes' ids separated by space to be connected.
-    :return: Graph object
-    """
-    g = Graph(int(data[0]))
-
-    for edge in data[1:]:
-        vertexes = [int(v) for v in edge.split(' ')]
-        g.add_edge(*vertexes)
-
-    return g
-
-
-class Graph:
+class Undigraph(Graph):
     def __init__(self, vertex_num):
         self.vertexes_number = vertex_num
         self.vertexes = [Vertex(v_id) for v_id in range(vertex_num)]
@@ -35,8 +11,8 @@ class Graph:
         str_repr = ''
 
         for vertex in self.vertexes:
-            for edge in sorted(vertex.adjencies):
-                str_repr += f'{vertex.id} - {edge}\n'
+            for adjacency in sorted(vertex.adjacencies):
+                str_repr += f'{vertex.id} - {adjacency}\n'
 
         return str_repr
 
@@ -47,43 +23,10 @@ class Graph:
             raise IndexError(id_2)
 
         self.edges_number += 1
-        self.vertexes[id_1].adjencies.append(id_2)
+        self.vertexes[id_1].adjacencies.append(id_2)
 
         if id_1 != id_2:
-            self.vertexes[id_2].adjencies.append(id_1)
-
-
-class TypicalGraphProcessing:
-    @staticmethod
-    def vertex_degree(graph: Graph, v_id: int):
-        return len(graph.vertexes[v_id].adjencies)
-
-    @staticmethod
-    def vertex_adjacencies(graph: Graph, v_id: int):
-        return graph.vertexes[v_id].adjencies
-
-    @staticmethod
-    def max_degree(graph: Graph):
-        max_degree = 0
-
-        for v in graph.vertexes:
-            if len(v.adjencies) > max_degree:
-                max_degree = len(v.adjencies)
-
-        return max_degree
-
-    @staticmethod
-    def average_degree(graph: Graph):
-        return graph.edges_number / len(graph.vertexes)
-
-    @staticmethod
-    def self_loops_number(graph: Graph):
-        self_loops_number = 0
-
-        for v in graph.vertexes:
-            self_loops_number += v.adjencies.count(v.id)
-
-        return self_loops_number
+            self.vertexes[id_2].adjacencies.append(id_1)
 
 
 class GraphFirstSearch:
@@ -119,7 +62,7 @@ class DepthFirstSearch(GraphFirstSearch):
     def __depth_first_paths(self, id):
         self.marked[id] = True
 
-        for adj in self.graph.vertexes[id].adjencies:
+        for adj in self.graph.vertexes[id].adjacencies:
             if not self.marked[adj]:
                 self.__depth_first_paths(adj)
                 self.edge_to[adj] = id
@@ -143,7 +86,7 @@ class BreadthFirstSearch(GraphFirstSearch):
         while search_queue:
             proceed_id = search_queue.pop()
 
-            for adj in self.graph.vertexes[proceed_id].adjencies:
+            for adj in self.graph.vertexes[proceed_id].adjacencies:
                 if not self.marked[adj]:
                     search_queue.insert(0, adj)
                     self.marked[adj] = True
@@ -170,7 +113,7 @@ class ConnectedComponents:
         self.marked[id] = True
         self.component_id[id] = self.components_count
 
-        for adj in self.graph.vertexes[id].adjencies:
+        for adj in self.graph.vertexes[id].adjacencies:
             if not self.marked[adj]:
                 self.__depth_first_paths(adj)
                 self.component_id[adj] = self.components_count
@@ -183,13 +126,18 @@ class ConnectedComponents:
 
 
 if __name__ == '__main__':
+    from graphs.graph import graph_from_data, TypicalGraphProcessing
+
     # Vertex
     v = Vertex(0)
     print(v)
     print('-' * 55, end='\n\n')
 
     # Graph
-    g = graph_from_data(['13', '0 5', '4 3', '0 1', '9 12', '6 4', '5 4', '0 2', '11 12', '9 10', '0 6', '7 8', '9 11', '5 3'])
+    g = graph_from_data(
+        data=['13', '0 5', '4 3', '0 1', '9 12', '6 4', '5 4', '0 2', '11 12', '9 10', '0 6', '7 8', '9 11', '5 3'],
+        graphtype=Undigraph,
+    )
     # print(g)
     print(f'Vertexes in graph: {g.vertexes_number}')
     print(f'Edges in graph: {g.edges_number}')
