@@ -114,14 +114,14 @@ class DepthFirstSearch(GraphFirstSearch):
         self.graph = graph
         self.root_id = root_id
 
-        self.__depth_first_pathes(id=self.root_id)
+        self.__depth_first_paths(id=self.root_id)
 
-    def __depth_first_pathes(self, id):
+    def __depth_first_paths(self, id):
         self.marked[id] = True
 
         for adj in self.graph.vertexes[id].adjencies:
             if not self.marked[adj]:
-                self.__depth_first_pathes(adj)
+                self.__depth_first_paths(adj)
                 self.edge_to[adj] = id
 
 
@@ -149,6 +149,37 @@ class BreadthFirstSearch(GraphFirstSearch):
                     self.marked[adj] = True
                     self.edge_to[adj] = proceed_id
                     self.dist_to_root[adj] = self.dist_to_root[proceed_id] + 1
+
+
+class ConnectedComponents:
+    def __init__(self, graph: Graph):
+        self.graph = graph
+        self.marked = [False for _ in range(len(graph.vertexes))]
+        self.component_id = [None for _ in range(len(graph.vertexes))]
+        self.components_count = 0
+
+        self.__connected_components()
+
+    def __connected_components(self):
+        for vertex in self.graph.vertexes:
+            if not self.marked[vertex.id]:
+                self.__depth_first_paths(vertex.id)
+                self.components_count += 1
+
+    def __depth_first_paths(self, id):
+        self.marked[id] = True
+        self.component_id[id] = self.components_count
+
+        for adj in self.graph.vertexes[id].adjencies:
+            if not self.marked[adj]:
+                self.__depth_first_paths(adj)
+                self.component_id[adj] = self.components_count
+
+    def components_number(self):
+        return self.components_count
+
+    def component_if_for_vertex_id(self, id: int):
+        return self.component_id[id]
 
 
 if __name__ == '__main__':
@@ -193,13 +224,20 @@ if __name__ == '__main__':
     print(f'Path from start_id "{start_id}" to id 6: {bfs.path_to(6)}')
     print(f'Path from start_id "{start_id}" to id 7: {bfs.path_to(7)}')
 
+    # Connected Components
+    print('\n--- Connected Components ---')
+    cc = ConnectedComponents(g)
+    print(f'Number of connected components: {cc.components_number()}')
+    print(f'Component id for vertex id 7: {cc.component_if_for_vertex_id(7)}')
+    print(f'Components ids: {cc.component_id}')
+
     print('-'*55, end='\n\n')
 
-    g2 = graph_from_data(['6', '0 5', '2 4', '2 3', '1 2', '0 1', '3 4', '3 5', '0 2'])
-    # print(g2)
-    start_id_2 = 0
-    print(f'Start id: {start_id_2}')
-    bfs_2 = BreadthFirstSearch(g2, start_id_2)
-    print(bfs_2.marked)
-    print(bfs_2.edge_to)
-    print(bfs_2.dist_to_root)
+    # g2 = graph_from_data(['6', '0 5', '2 4', '2 3', '1 2', '0 1', '3 4', '3 5', '0 2'])
+    # # print(g2)
+    # start_id_2 = 0
+    # print(f'Start id: {start_id_2}')
+    # bfs_2 = BreadthFirstSearch(g2, start_id_2)
+    # print(bfs_2.marked)
+    # print(bfs_2.edge_to)
+    # print(bfs_2.dist_to_root)
