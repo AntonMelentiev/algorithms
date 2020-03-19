@@ -53,16 +53,16 @@ class TypicalGraphProcessing:
         return self_loops_number
 
 
-def graph_from_data(data: list, graphtype: Graph):
+def graph_from_data(data: list, graph_type):
     """
     Example of input data: ['13', '0 5', '4 3', '0 1', '9 12', '6 4', '5 4', '0 2']
     :param data: List of strings.
                  First string - number of vertexes in graph.
                  All subsequent strings - pairs of vertexes' ids separated by space to be connected.
-    :param graphtype: Undigraph or Digraph object
+    :param graph_type: Undigraph or Digraph object
     :return: Graph object
     """
-    g = graphtype(int(data[0]))
+    g = graph_type(int(data[0]))
 
     for edge in data[1:]:
         vertexes = [int(v) for v in edge.split(' ')]

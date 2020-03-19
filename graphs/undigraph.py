@@ -34,17 +34,17 @@ class GraphFirstSearch:
     edge_to: list
     root_id: int
 
-    def has_path_to(self, id: int):
-        return self.marked[id]
+    def has_path_to(self, vertex_id: int):
+        return self.marked[vertex_id]
 
-    def path_to(self, id: int):
-        if not self.has_path_to(id):
+    def path_to(self, vertex_id: int):
+        if not self.has_path_to(vertex_id):
             return None
 
         path = []
-        while id != self.root_id:
-            path.insert(0, id)
-            id = self.edge_to[id]
+        while vertex_id != self.root_id:
+            path.insert(0, vertex_id)
+            vertex_id = self.edge_to[vertex_id]
 
         path.insert(0, self.root_id)
         return path
@@ -57,15 +57,15 @@ class DepthFirstSearch(GraphFirstSearch):
         self.graph = graph
         self.root_id = root_id
 
-        self.__depth_first_paths(id=self.root_id)
+        self.__depth_first_paths(vertex_id=self.root_id)
 
-    def __depth_first_paths(self, id):
-        self.marked[id] = True
+    def __depth_first_paths(self, vertex_id):
+        self.marked[vertex_id] = True
 
-        for adj in self.graph.vertexes[id].adjacencies:
+        for adj in self.graph.vertexes[vertex_id].adjacencies:
             if not self.marked[adj]:
                 self.__depth_first_paths(adj)
-                self.edge_to[adj] = id
+                self.edge_to[adj] = vertex_id
 
 
 class BreadthFirstSearch(GraphFirstSearch):
@@ -76,12 +76,12 @@ class BreadthFirstSearch(GraphFirstSearch):
         self.graph = graph
         self.root_id = root_id
 
-        self.__breadth_first_paths(id=self.root_id)
+        self.__breadth_first_paths(vertex_id=self.root_id)
 
-    def __breadth_first_paths(self, id):
-        search_queue = [id]
-        self.marked[id] = True
-        self.dist_to_root[id] = 0
+    def __breadth_first_paths(self, vertex_id):
+        search_queue = [vertex_id]
+        self.marked[vertex_id] = True
+        self.dist_to_root[vertex_id] = 0
 
         while search_queue:
             proceed_id = search_queue.pop()
@@ -109,11 +109,11 @@ class ConnectedComponents:
                 self.__depth_first_paths(vertex.id)
                 self.components_count += 1
 
-    def __depth_first_paths(self, id):
-        self.marked[id] = True
-        self.component_id[id] = self.components_count
+    def __depth_first_paths(self, vertex_id):
+        self.marked[vertex_id] = True
+        self.component_id[vertex_id] = self.components_count
 
-        for adj in self.graph.vertexes[id].adjacencies:
+        for adj in self.graph.vertexes[vertex_id].adjacencies:
             if not self.marked[adj]:
                 self.__depth_first_paths(adj)
                 self.component_id[adj] = self.components_count
@@ -121,8 +121,8 @@ class ConnectedComponents:
     def components_number(self):
         return self.components_count
 
-    def component_if_for_vertex_id(self, id: int):
-        return self.component_id[id]
+    def component_if_for_vertex_id(self, vertex_id: int):
+        return self.component_id[vertex_id]
 
 
 if __name__ == '__main__':
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     # Graph
     g = graph_from_data(
         data=['13', '0 5', '4 3', '0 1', '9 12', '6 4', '5 4', '0 2', '11 12', '9 10', '0 6', '7 8', '9 11', '5 3'],
-        graphtype=Undigraph,
+        graph_type=Undigraph,
     )
     # print(g)
     print(f'Vertexes in graph: {g.vertexes_number}')
