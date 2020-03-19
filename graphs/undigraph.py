@@ -144,8 +144,8 @@ if __name__ == '__main__':
     print(f'Max graphs degree: {TypicalGraphProcessing.max_degree(g)}')
     print(f'Average graphs degree: {TypicalGraphProcessing.average_degree(g)}')
     print(f'Number of self loops: {TypicalGraphProcessing.self_loops_number(g)}')
-    print(f'Adjacencies of vertex 1: {TypicalGraphProcessing.vertex_adjacencies(g, 1)}')
-    print(f'Degree of vertex 1: {TypicalGraphProcessing.vertex_degree(g, 1)}')
+    print(f'Adjacencies of vertex 12: {TypicalGraphProcessing.vertex_adjacencies(g, 12)}')
+    print(f'Degree of vertex 12: {TypicalGraphProcessing.vertex_degree(g, 12)}')
 
     try:
         g.add_edge(1, 15)

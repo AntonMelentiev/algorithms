@@ -1,14 +1,7 @@
-from dataclasses import dataclass, field
+from graphs.graph import Graph, Vertex
 
 
-@dataclass
-class Vertex:
-    id: int
-    adjacencies: list = field(default_factory=list)
-    value: object = None
-
-
-class Digraph:
+class Digraph(Graph):
     def __init__(self, vertex_num):
         self.vertexes_number = vertex_num
         self.vertexes = [Vertex(v_id) for v_id in range(vertex_num)]
@@ -31,3 +24,33 @@ class Digraph:
 
         self.edges_number += 1
         self.vertexes[id_1].adjacencies.append(id_2)
+
+
+if __name__ == '__main__':
+    from graphs.graph import graph_from_data, TypicalGraphProcessing
+
+    # Vertex
+    v = Vertex(0)
+    print(v)
+    print('-' * 55, end='\n\n')
+
+    # Graph
+    g = graph_from_data(
+        data=['13', '0 5', '4 3', '0 1', '9 12', '6 4', '5 4', '0 2', '11 12', '9 10', '0 6', '7 8', '9 11', '5 3'],
+        graph_type=Digraph,
+    )
+    print(g)
+    print(f'Vertexes in graph: {g.vertexes_number}')
+    print(f'Edges in graph: {g.edges_number}')
+    print(f'Max graphs degree: {TypicalGraphProcessing.max_degree(g)}')
+    print(f'Average graphs degree: {TypicalGraphProcessing.average_degree(g)}')
+    print(f'Number of self loops: {TypicalGraphProcessing.self_loops_number(g)}')
+    print(f'Adjacencies of vertex 12: {TypicalGraphProcessing.vertex_adjacencies(g, 12)}')
+    print(f'Degree of vertex 12: {TypicalGraphProcessing.vertex_degree(g, 12)}')
+    print(f'Adjacencies of vertex 5: {TypicalGraphProcessing.vertex_adjacencies(g, 5)}')
+    print(f'Degree of vertex 5: {TypicalGraphProcessing.vertex_degree(g, 5)}')
+
+    try:
+        g.add_edge(1, 15)
+    except IndexError as e:
+        print(f'IndexError occurs on index "{e}"')
