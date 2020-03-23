@@ -26,8 +26,65 @@ class Digraph(Graph):
         self.vertexes[id_1].adjacencies.append(id_2)
 
 
+class TopologicalSort:
+    def __init__(self, graph: Graph):
+        self.graph = graph
+        self.marked = [False for _ in range(len(graph.vertexes))]
+        self.path = []
+
+        for vertex in self.graph.vertexes:
+            if not self.marked[vertex.id]:
+                self.__depth_first_paths(vertex_id=vertex.id)
+
+    def __depth_first_paths(self, vertex_id):
+        self.marked[vertex_id] = True
+
+        for adj in self.graph.vertexes[vertex_id].adjacencies:
+            if not self.marked[adj]:
+                self.__depth_first_paths(adj)
+
+        self.path.append(vertex_id)
+
+
+class CycleDetector:
+    def __init__(self, graph: Graph):
+        self.graph = graph
+        self.marked = [False for _ in range(len(graph.vertexes))]
+        self.path = []
+        self.cycle = False
+        self.stop = False
+        self.cycle_path = []
+
+        for vertex in self.graph.vertexes:
+            if not self.marked[vertex.id] and not self.stop:
+                self.__depth_first_paths(vertex_id=vertex.id)
+
+    def __depth_first_paths(self, vertex_id):
+        self.marked[vertex_id] = True
+        self.path.append(vertex_id)
+
+        for adj in self.graph.vertexes[vertex_id].adjacencies:
+            if self.stop:
+                break
+
+            if not self.marked[adj]:
+                self.__depth_first_paths(adj)
+            else:
+                if adj in self.path:
+                    self.cycle = True
+                    self.stop = True
+                    self.cycle_path = self.path[self.path.index(adj):] + [adj]
+
+        if not self.stop:
+            self.path.pop()
+
+    def get_cycle(self):
+        if not self.cycle:
+            return
+
+
 if __name__ == '__main__':
-    from graphs.graph import graph_from_data, TypicalGraphProcessing
+    from graphs.graph import graph_from_data, TypicalGraphProcessing, DepthFirstSearch, BreadthFirstSearch
 
     # Vertex
     v = Vertex(0)
@@ -36,7 +93,7 @@ if __name__ == '__main__':
 
     # Graph
     g = graph_from_data(
-        data=['13', '0 5', '4 3', '0 1', '9 12', '6 4', '5 4', '0 2', '11 12', '9 10', '0 6', '7 8', '9 11', '5 3'],
+        data=['13', '0 5', '4 3', '0 1', '9 12', '6 4', '5 4', '0 2', '11 12', '9 10', '0 6', '7 8', '9 11', '3 5'],
         graph_type=Digraph,
     )
     print(g)
@@ -54,3 +111,45 @@ if __name__ == '__main__':
         g.add_edge(1, 15)
     except IndexError as e:
         print(f'IndexError occurs on index "{e}"')
+
+    # Depth First Search
+    print('\n--- Depth First Search ---')
+    start_id = 0
+    dfs = DepthFirstSearch(g, start_id)
+    print(f'Visited vertexes: {dfs.marked}')
+    # print(dfs.edge_to)
+    print(f'Path from start_id "{start_id}" to id 3: {dfs.path_to(3)}')
+    print(f'Path from start_id "{start_id}" to id 6: {dfs.path_to(6)}')
+    print(f'Path from start_id "{start_id}" to id 7: {dfs.path_to(7)}')
+
+    # Breadth First Search
+    print('\n--- Breadth First Search ---')
+    bfs = BreadthFirstSearch(g, start_id)
+    print(f'Visited vertexes: {bfs.marked}')
+    # print(bfs.edge_to)
+    # print(bfs.dist_to_root)
+    print(f'Path from start_id "{start_id}" to id 3: {bfs.path_to(3)}')
+    print(f'Path from start_id "{start_id}" to id 6: {bfs.path_to(6)}')
+    print(f'Path from start_id "{start_id}" to id 7: {bfs.path_to(7)}')
+
+    # Topological sort
+    print('\n--- Topological sort ---')
+    g2 = graph_from_data(
+        data=[7,  '0 5', '0 2', '0 1', '3 6', '3 5', '3 4', '5 2', '6 4', '6 0', '3 2', '1 4'],
+        graph_type=Digraph,
+    )
+    ts = TopologicalSort(g2)
+    print(f'Topological sort in given graph: {ts.path}')
+
+    # Cycle Detector
+    print('\n--- Cycle Detector ---')
+    test_edge = '2 3'  # with cycle
+    # test_edge = '3 2'  # without cycle
+
+    g3 = graph_from_data(
+        data=[7,  '0 5', '0 2', '0 1', '3 6', '3 5', '3 4', '5 2', '6 4', '6 0', test_edge, '1 4'],
+        graph_type=Digraph,
+    )
+    cd = CycleDetector(g3)
+    print(g3)
+    print(f'First founded cycle in graph: {cd.cycle_path}')

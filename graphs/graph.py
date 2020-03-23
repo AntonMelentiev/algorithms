@@ -53,6 +53,71 @@ class TypicalGraphProcessing:
         return self_loops_number
 
 
+class GraphFirstSearch:
+    marked: list
+    edge_to: list
+    root_id: int
+
+    def has_path_to(self, vertex_id: int):
+        return self.marked[vertex_id]
+
+    def path_to(self, vertex_id: int):
+        if not self.has_path_to(vertex_id):
+            return None
+
+        path = []
+        while vertex_id != self.root_id:
+            path.insert(0, vertex_id)
+            vertex_id = self.edge_to[vertex_id]
+
+        path.insert(0, self.root_id)
+        return path
+
+
+class DepthFirstSearch(GraphFirstSearch):
+    def __init__(self, graph: Graph, root_id: int):
+        self.marked = [False for _ in range(len(graph.vertexes))]
+        self.edge_to = [None for _ in range(len(graph.vertexes))]
+        self.graph = graph
+        self.root_id = root_id
+
+        self.__depth_first_paths(vertex_id=self.root_id)
+
+    def __depth_first_paths(self, vertex_id):
+        self.marked[vertex_id] = True
+
+        for adj in self.graph.vertexes[vertex_id].adjacencies:
+            if not self.marked[adj]:
+                self.__depth_first_paths(adj)
+                self.edge_to[adj] = vertex_id
+
+
+class BreadthFirstSearch(GraphFirstSearch):
+    def __init__(self, graph: Graph, root_id: int):
+        self.marked = [False for _ in range(len(graph.vertexes))]
+        self.edge_to = [None for _ in range(len(graph.vertexes))]
+        self.dist_to_root = [None for _ in range(len(graph.vertexes))]
+        self.graph = graph
+        self.root_id = root_id
+
+        self.__breadth_first_paths(vertex_id=self.root_id)
+
+    def __breadth_first_paths(self, vertex_id):
+        search_queue = [vertex_id]
+        self.marked[vertex_id] = True
+        self.dist_to_root[vertex_id] = 0
+
+        while search_queue:
+            proceed_id = search_queue.pop()
+
+            for adj in self.graph.vertexes[proceed_id].adjacencies:
+                if not self.marked[adj]:
+                    search_queue.insert(0, adj)
+                    self.marked[adj] = True
+                    self.edge_to[adj] = proceed_id
+                    self.dist_to_root[adj] = self.dist_to_root[proceed_id] + 1
+
+
 def graph_from_data(data: list, graph_type):
     """
     Example of input data: ['13', '0 5', '4 3', '0 1', '9 12', '6 4', '5 4', '0 2']
