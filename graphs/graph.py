@@ -15,11 +15,10 @@ class Edge:
         self.weight = weight
 
     def __repr__(self):
-        str_repr = ''
+        return f'{self.v1.id: <3}--|{self.weight: ^6}|-- {self.v2.id: >3}'
 
-        str_repr += f'{self.v1.id} --({self.weight})--> {self.v2.id}'
-
-        return str_repr
+    def __str__(self):
+        return self.__repr__()
 
     def __lt__(self, other):
         if self.weight < other.weight:
@@ -65,8 +64,8 @@ class Graph:
     vertexes_number: int
     edges_number: int
 
-    def __repr__(self):
-        raise NotImplemented
+    def __str__(self):
+        return self.__repr__()
 
     def add_edge(self, id_1: int, id_2: int):
         raise NotImplemented

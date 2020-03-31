@@ -17,10 +17,13 @@ class Connectivity:
     def show_connection(self, element, to_element):
         print(f'id {element} connected to id {to_element}: ', self.is_connected(element, to_element))
 
-    def __str__(self):
+    def __repr__(self):
         a = [i for i in range(self.length)]
         b = self.data
         return f'{a} "ids"\n{b}\n'
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class QuickFind(Connectivity):
