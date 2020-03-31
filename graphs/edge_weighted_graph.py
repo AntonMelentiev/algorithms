@@ -67,15 +67,6 @@ class KruskalMST:
 if __name__ == '__main__':
     from graphs.graph import edge_weight_graph_from_data
 
-    v1 = Vertex(id=1)
-    v2 = Vertex(id=2)
-    v3 = Vertex(id=3)
-    e1 = Edge(v1, v2, 5)
-    e2 = Edge(v1, v3, 10)
-    print(e1)
-    print(e2)
-    print(e1 < e2)
-
     g_data = [
         '8',
         '0 7 0.16',
@@ -97,11 +88,13 @@ if __name__ == '__main__':
     ]
 
     g = edge_weight_graph_from_data(g_data, EdgeWeightedGraph)
-    print(g)
+    print('-' * 50)
+    print(f'Edge weighted graph representation: \n{g}')
 
     kruskal_mst = KruskalMST(g)
 
+    print('MST (minimum span tree) for given graph:')
     for edge in kruskal_mst.mst_edges():
         print(edge)
 
-    print(kruskal_mst.mst_weight())
+    print(f'\nMST weight: {kruskal_mst.mst_weight()}')
