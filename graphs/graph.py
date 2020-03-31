@@ -8,9 +8,61 @@ class Vertex:
     value: object = None
 
 
+class Edge:
+    def __init__(self, v1: Vertex, v2: Vertex, weight):
+        self.v1 = v1
+        self.v2 = v2
+        self.weight = weight
+
+    def __repr__(self):
+        str_repr = ''
+
+        str_repr += f'{self.v1.id} --({self.weight})--> {self.v2.id}'
+
+        return str_repr
+
+    def __lt__(self, other):
+        if self.weight < other.weight:
+            return True
+        return False
+
+    def __le__(self, other):
+        if self.weight <= other.weight:
+            return True
+        return False
+
+    def __eq__(self, other):
+        if self.weight == other.weight:
+            return True
+        return False
+
+    def __ne__(self, other):
+        if self.weight != other.weight:
+            return True
+        return False
+
+    def __gt__(self, other):
+        if self.weight > other.weight:
+            return True
+        return False
+
+    def __ge__(self, other):
+        if self.weight >= other.weight:
+            return True
+        return False
+
+    def either_vertex(self):
+        return self.v1
+
+    def other_vertex(self, vertex: Vertex):
+        if vertex == self.v1:
+            return self.v2
+        return self.v1
+
+
 class Graph:
-    vertexes_number: int
     vertexes: list
+    vertexes_number: int
     edges_number: int
 
     def __repr__(self):
@@ -132,5 +184,25 @@ def graph_from_data(data: list, graph_type):
     for edge in data[1:]:
         vertexes = [int(v) for v in edge.split(' ')]
         g.add_edge(*vertexes)
+
+    return g
+
+
+def edge_weight_graph_from_data(data: list, graph_type):
+    """
+    Example of input data: ['13', '0 5 0.37', '4 3 1.2', '0 1 0.5', '9 12 1', '6 4 0.12', '5 4 0.12', '0 2 0.75']
+    :param data: List of strings.
+                 First string - number of vertexes in graph.
+                 All subsequent strings - pairs of vertexes' ids and wait of this edge separated by space.
+    :param graph_type: Undigraph or Digraph object
+    :return: Graph object
+    """
+    g = graph_type(int(data[0]))
+
+    for edge_str in data[1:]:
+        edge_data = edge_str.split(' ')
+        edges_repr = [int(edge_data[0]), int(edge_data[1]), float(edge_data[2])]
+        edge = Edge(g.vertexes[edges_repr[0]], g.vertexes[edges_repr[1]], edges_repr[2])
+        g.add_edge(edge)
 
     return g
