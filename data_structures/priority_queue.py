@@ -71,29 +71,10 @@ class PriorityQueue:
         self.queue[j] = temp
 
     def _swim(self, item_id: int):
-        while (item_id > 1) and (self.queue[item_id // 2].weight < self.queue[item_id].weight):
-            self._exchange(item_id, item_id // 2)
-            item_id = item_id // 2
+        raise NotImplemented
 
     def _sink(self, item_id: int, bottom: int = None):
-        if bottom is None:
-            bottom = self.queue_size
-
-        while item_id * 2 <= bottom:
-            bigger_child_id = item_id * 2
-
-            if (
-                    (bigger_child_id < bottom)
-                    and
-                    (self.queue[bigger_child_id].weight < self.queue[bigger_child_id + 1].weight)
-            ):
-                bigger_child_id += 1
-
-            if self.queue[item_id].weight > self.queue[bigger_child_id].weight:
-                break
-
-            self._exchange(item_id, bigger_child_id)
-            item_id = bigger_child_id
+        raise NotImplemented
 
     def add_to_queue(self, item: object, priority: int):
         """
@@ -108,20 +89,6 @@ class PriorityQueue:
         self.queue.append(item_to_queue)
         self.queue_size += 1
         self._swim(self.queue_size)
-
-    def pop_max(self):
-        """
-        Get object with max priority and remove it from queue
-        :return: object
-        """
-        if self.queue_size == 0:
-            return
-
-        self._exchange(1, self.queue_size)
-        item_to_return = self.queue.pop().item
-        self.queue_size -= 1
-        self._sink(1)
-        return item_to_return
 
     def get_size(self):
         """
@@ -161,6 +128,90 @@ class PriorityQueue:
         return result
 
 
+class MaxPriorityQueue(PriorityQueue):
+
+    def _swim(self, item_id: int):
+        while (item_id > 1) and (self.queue[item_id // 2].weight < self.queue[item_id].weight):
+            self._exchange(item_id, item_id // 2)
+            item_id = item_id // 2
+
+    def _sink(self, item_id: int, bottom: int = None):
+        if bottom is None:
+            bottom = self.queue_size
+
+        while item_id * 2 <= bottom:
+            bigger_child_id = item_id * 2
+
+            if (
+                    (bigger_child_id < bottom)
+                    and
+                    (self.queue[bigger_child_id].weight < self.queue[bigger_child_id + 1].weight)
+            ):
+                bigger_child_id += 1
+
+            if self.queue[item_id].weight > self.queue[bigger_child_id].weight:
+                break
+
+            self._exchange(item_id, bigger_child_id)
+            item_id = bigger_child_id
+
+    def pop_max(self):
+        """
+        Get object with max priority and remove it from queue
+        :return: object
+        """
+        if self.queue_size == 0:
+            return
+
+        self._exchange(1, self.queue_size)
+        item_to_return = self.queue.pop().item
+        self.queue_size -= 1
+        self._sink(1)
+        return item_to_return
+
+
+class MinPriorityQueue(PriorityQueue):
+
+    def _swim(self, item_id: int):
+        while (item_id > 1) and (self.queue[item_id // 2].weight > self.queue[item_id].weight):
+            self._exchange(item_id, item_id // 2)
+            item_id = item_id // 2
+
+    def _sink(self, item_id: int, bottom: int = None):
+        if bottom is None:
+            bottom = self.queue_size
+
+        while item_id * 2 <= bottom:
+            smaller_child_id = item_id * 2
+
+            if (
+                    (smaller_child_id < bottom)
+                    and
+                    (self.queue[smaller_child_id].weight > self.queue[smaller_child_id + 1].weight)
+            ):
+                smaller_child_id += 1
+
+            if self.queue[item_id].weight < self.queue[smaller_child_id].weight:
+                break
+
+            self._exchange(item_id, smaller_child_id)
+            item_id = smaller_child_id
+
+    def pop_min(self):
+        """
+        Get object with max priority and remove it from queue
+        :return: object
+        """
+        if self.queue_size == 0:
+            return
+
+        self._exchange(1, self.queue_size)
+        item_to_return = self.queue.pop().item
+        self.queue_size -= 1
+        self._sink(1)
+        return item_to_return
+
+
 if __name__ == '__main__':
     import time
     from random import randint
@@ -181,13 +232,16 @@ if __name__ == '__main__':
         for i in sequence:
             queue.add_to_queue(i, i)
 
-    pq_1 = PriorityQueue()
+    max_pq_1 = MaxPriorityQueue()
 
     for _ in range(15):
-        pq_1.add_to_queue(item=randint(20, 25), priority=randint(1, 20))
+        max_pq_1.add_to_queue(item=randint(20, 25), priority=randint(1, 20))
 
-    print(f'\nQueue size: {pq_1.queue_size}\n\n')
-    pq_1.display()
+    print(f'\nQueue size: {max_pq_1.queue_size}\n\n')
+    max_pq_1.display()
+    max_item = max_pq_1.pop_max()
+    print(f'\nMax_item: {max_item}\n')
+    max_pq_1.display()
 
     print()
     print('--- '*27)
@@ -197,12 +251,12 @@ if __name__ == '__main__':
     size = 3_000
 
     for _ in range(times):
-        pq_2 = PriorityQueue()
-        fill_queue_from_list(pq_2, range(size))  # unique items
-        # fill_queue_from_list(pq_2, [randint(1, 100) for _ in range(size)])  # items with duplicated keys
+        max_pq_2 = MaxPriorityQueue()
+        fill_queue_from_list(max_pq_2, range(size))  # unique items
+        # fill_queue_from_list(max_pq_2, [randint(1, 100) for _ in range(size)])  # items with duplicated keys
 
         start = time.time()
-        sorted_result = pq_2.get_sorted()
+        sorted_result = max_pq_2.get_sorted()
         end = time.time()
         full_time += end - start
 
@@ -213,3 +267,13 @@ if __name__ == '__main__':
     print(f' {round(full_time / times, 5)} seconds')
 
     print('--- '*27, end='\n\n')
+
+    min_pq = MinPriorityQueue()
+
+    for _ in range(15):
+        min_pq.add_to_queue(item=randint(20, 25), priority=randint(1, 20))
+
+    min_pq.display()
+    min_item = min_pq.pop_min()
+    print(f'\nMin_item: {min_item}\n')
+    min_pq.display()
