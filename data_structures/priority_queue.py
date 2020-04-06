@@ -102,7 +102,7 @@ class PriorityQueue:
         Check if queue is empty
         :return: bool
         """
-        return bool(self.queue_size)
+        return not bool(self.queue_size)
 
     def get_sorted(self, reverse: bool = False):
         """

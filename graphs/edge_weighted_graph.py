@@ -1,5 +1,6 @@
 from copy import copy
 
+from data_structures.priority_queue import MinPriorityQueue
 from graphs.graph import Vertex, Edge
 from connectivity.connectivity import QuickUnion
 
@@ -37,7 +38,7 @@ class EdgeWeightedGraph:
 
 
 class KruskalMST:
-    def __init__(self, graph):
+    def __init__(self, graph: EdgeWeightedGraph):
         self.graph = graph
         self.quick_union = QuickUnion(self.graph.vertexes_number)
         self.edges = sorted(copy(self.graph.edges), reverse=True)
@@ -51,6 +52,49 @@ class KruskalMST:
             if not self.quick_union.is_connected(v1.id, v2.id):
                 self.mst.append(edge)
                 self.quick_union.union(v1.id, v2.id)
+
+    def mst_edges(self):
+        return self.mst
+
+    def mst_weight(self):
+        weight = 0
+
+        for edge in self.mst_edges():
+            weight += edge.weight
+
+        return weight
+
+
+class LazyPrimMST:
+    def __init__(self, graph: EdgeWeightedGraph):
+        self.graph = graph
+        self.mst = []
+        self.marked = [False for _ in range(self.graph.vertexes_number)]
+        self.pq = MinPriorityQueue()
+        self._visit(self.graph.vertexes[0])
+
+        while (not self.pq.is_empty()) and (len(self.mst) < self.graph.vertexes_number - 1):
+            edge = self.pq.pop_min()
+            v1 = edge.either_vertex()
+            v2 = edge.other_vertex(v1)
+
+            if self.marked[v1.id] and self.marked[v2.id]:
+                continue
+
+            self.mst.append(edge)
+
+            if not self.marked[v1.id]:
+                self._visit(v1)
+
+            if not self.marked[v2.id]:
+                self._visit(v2)
+
+    def _visit(self, vertex):
+        self.marked[vertex.id] = True
+
+        for edge in vertex.adjacencies:
+            if not self.marked[edge.other_vertex(vertex).id]:
+                self.pq.add_to_queue(edge, edge.weight)
 
     def mst_edges(self):
         return self.mst
@@ -91,10 +135,24 @@ if __name__ == '__main__':
     print('-' * 50)
     print(f'Edge weighted graph representation: \n{g}')
 
+    print('-' * 50)
+    print('Kruskal Minimum Spain Trees:')
     kruskal_mst = KruskalMST(g)
-
     print('MST (minimum span tree) for given graph:')
     for edge in kruskal_mst.mst_edges():
         print(edge)
-
     print(f'\nMST weight: {kruskal_mst.mst_weight()}')
+
+    print('-' * 50)
+    print('Lazy Prim Minimum Spain Trees:')
+
+    print('-' * 50)
+    print('Kruskal Minimum Spain Trees:')
+    prim_mst = LazyPrimMST(g)
+    print('MST (minimum span tree) for given graph:')
+    for edge in sorted(prim_mst.mst_edges()):
+        print(edge)
+    print(f'\nMST weight: {prim_mst.mst_weight()}')
+
+    print('-' * 50)
+    print('Lazy Prim Minimum Spain Trees:')
