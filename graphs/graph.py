@@ -59,6 +59,17 @@ class Edge:
         return self.v1
 
 
+class Diedge(Edge):
+    def __repr__(self):
+        return f'{self.v1.id: <3}--|{self.weight: ^6}|--> {self.v2.id: >3}'
+
+    def from_vertex(self):
+        return self.v1
+
+    def to_vertex(self):
+        return self.v2
+
+
 class Graph:
     vertexes: list
     vertexes_number: int
