@@ -199,7 +199,7 @@ class MinPriorityQueue(PriorityQueue):
 
     def pop_min(self):
         """
-        Get object with max priority and remove it from queue
+        Get object with min priority and remove it from queue
         :return: object
         """
         if self.queue_size == 0:
