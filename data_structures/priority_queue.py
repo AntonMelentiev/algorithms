@@ -3,15 +3,13 @@ from dataclasses import dataclass
 
 @dataclass
 class PriorityQueueItem:
-    weight: int
+    weight: float
     item: object
 
 
 class PriorityQueue:
-    def __init__(self):
-        self.queue = []
-        self.queue.append(PriorityQueueItem(0, None))  # item with index 0 not used in this model
-        self.queue_size = 0
+    queue: list
+    queue_size: int
 
     def display(self):
         """
@@ -34,7 +32,7 @@ class PriorityQueue:
 
         # No child.
         if (id * 2 + 1 > self.queue_size) and (id * 2 > self.queue_size):
-            line = '%s (%s)' % (self.queue[id].weight, self.queue[id].item)
+            line = '%s (i: %s)' % (self.queue[id].weight, self.queue[id].item)
             width = len(line)
             height = 1
             middle = width // 2
@@ -43,7 +41,7 @@ class PriorityQueue:
         # Only left child.
         if id * 2 + 1 > self.queue_size:
             lines, n, p, x = self._display_aux(id * 2)
-            s = '%s (%s)' % (self.queue[id].weight, self.queue[id].item)
+            s = '%s (i: %s)' % (self.queue[id].weight, self.queue[id].item)
             u = len(s)
             first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s
             second_line = x * ' ' + '/' + (n - x - 1 + u) * ' '
@@ -53,7 +51,7 @@ class PriorityQueue:
         # Two children.
         left, n, p, x = self._display_aux(id * 2)
         right, m, q, y = self._display_aux(id * 2 + 1)
-        s = '%s (%s)' % (self.queue[id].weight, self.queue[id].item)
+        s = '%s (i: %s)' % (self.queue[id].weight, self.queue[id].item)
         u = len(s)
         first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s + y * '_' + (m - y) * ' '
         second_line = x * ' ' + '/' + (n - x - 1 + u + y) * ' ' + '\\' + (m - y - 1) * ' '
@@ -76,14 +74,13 @@ class PriorityQueue:
     def _sink(self, item_id: int, bottom: int = None):
         raise NotImplemented
 
-    def add_to_queue(self, item: object, priority: int):
+    def add_to_queue(self, item: object, priority: float):
         """
         Add object to queue with given priority
         :param item: Any object
         :param priority: which priority this object has in the queue
         :return: None
         """
-
         item_to_queue = PriorityQueueItem(weight=priority, item=item)
 
         self.queue.append(item_to_queue)
@@ -129,6 +126,10 @@ class PriorityQueue:
 
 
 class MaxPriorityQueue(PriorityQueue):
+    def __init__(self):
+        self.queue = []
+        self.queue.append(PriorityQueueItem(0, None))  # item with index 0 not used in this model
+        self.queue_size = 0
 
     def _swim(self, item_id: int):
         while (item_id > 1) and (self.queue[item_id // 2].weight < self.queue[item_id].weight):
@@ -171,6 +172,10 @@ class MaxPriorityQueue(PriorityQueue):
 
 
 class MinPriorityQueue(PriorityQueue):
+    def __init__(self):
+        self.queue = []
+        self.queue.append(PriorityQueueItem(0, None))  # item with index 0 not used in this model
+        self.queue_size = 0
 
     def _swim(self, item_id: int):
         while (item_id > 1) and (self.queue[item_id // 2].weight > self.queue[item_id].weight):
@@ -212,6 +217,71 @@ class MinPriorityQueue(PriorityQueue):
         return item_to_return
 
 
+class IndexMinPriorityQueue(MinPriorityQueue):
+    def __init__(self):
+        self.queue = []
+        self.items = []
+        self.item_ids_in_queue = []
+        self.queue.append(PriorityQueueItem(0, None))  # item with index 0 not used in this model
+        self.queue_size = 0
+
+    def add_to_queue(self, item: object, priority: float):
+        """
+        Add object to queue with given priority
+        :param item: Any object
+        :param priority: which priority this object has in the queue
+        :return: None
+        """
+        if self._contains(item):
+            raise ValueError('Item already in queue. Add another item or copy of current item.')
+
+        item_to_queue = PriorityQueueItem(weight=priority, item=len(self.items))
+        self.items.append(item)
+        self.queue.append(item_to_queue)
+        self.queue_size += 1
+        self.item_ids_in_queue.append(self.queue_size)
+        self._swim(self.queue_size)
+
+    def pop_min(self):
+        """
+        Get object with min priority and remove it from queue
+        :return: object
+        """
+        if self.queue_size == 0:
+            return
+
+        self._exchange(1, self.queue_size)
+        item_id_to_return = self.queue.pop().item
+        item_to_return = self.items[item_id_to_return]
+        self.queue_size -= 1
+        self._sink(1)
+        self.items[item_id_to_return] = None
+        self.item_ids_in_queue[item_id_to_return] = None
+        return item_to_return
+
+    def update_priority(self, item: object, new_priority: float):
+        if not self._contains(item):
+            raise ValueError('Item not in queue. Update priority available only for items in queue.')
+
+        item_id = self.items.index(item)
+        item_id_in_queue = self.item_ids_in_queue[item_id]
+        self.queue[item_id_in_queue].weight = new_priority
+        self._sink(item_id_in_queue)
+        self._swim(item_id_in_queue)
+        a=0
+
+    def _exchange(self, i: int, j: int):
+        self.item_ids_in_queue[self.queue[j].item] = i
+        self.item_ids_in_queue[self.queue[i].item] = j
+        temp = self.queue[i]
+        self.queue[i] = self.queue[j]
+        self.queue[j] = temp
+        a = 0
+
+    def _contains(self, item: object):
+        return item in self.items
+
+
 if __name__ == '__main__':
     import time
     from random import randint
@@ -237,6 +307,7 @@ if __name__ == '__main__':
     for _ in range(15):
         max_pq_1.add_to_queue(item=randint(20, 25), priority=randint(1, 20))
 
+    print('Max priority queue')
     print(f'\nQueue size: {max_pq_1.queue_size}\n\n')
     max_pq_1.display()
     max_item = max_pq_1.pop_max()
@@ -244,7 +315,7 @@ if __name__ == '__main__':
     max_pq_1.display()
 
     print()
-    print('--- '*27)
+    print('--- '*50)
 
     full_time = 0
     times = 10
@@ -266,7 +337,8 @@ if __name__ == '__main__':
     print(f'Rounded average time out of 10 executions of "heap_sort" for {size} items:'.ljust(90), end='')
     print(f' {round(full_time / times, 5)} seconds')
 
-    print('--- '*27, end='\n\n')
+    print('--- '*50, end='\n\n')
+    print('Min priority queue')
 
     min_pq = MinPriorityQueue()
 
@@ -277,3 +349,20 @@ if __name__ == '__main__':
     min_item = min_pq.pop_min()
     print(f'\nMin_item: {min_item}\n')
     min_pq.display()
+
+    print('--- '*50, end='\n\n')
+    print('Index min priority queue')
+
+    i_min_pq = IndexMinPriorityQueue()
+
+    for i in range(15):
+        i_min_pq.add_to_queue(item=i + 0.5, priority=randint(1, 20))
+
+    i_min_pq.display()
+    i_min_pq.update_priority(2.5, 0.5)
+    print()
+    i_min_pq.display()
+
+    min_item = i_min_pq.pop_min()
+    print(f'\nMin_item: {min_item}\n')
+    i_min_pq.display()
