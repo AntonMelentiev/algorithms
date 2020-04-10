@@ -204,7 +204,7 @@ def edge_weight_graph_from_data(data: list, graph_type):
     :param data: List of strings.
                  First string - number of vertexes in graph.
                  All subsequent strings - pairs of vertexes' ids and wait of this edge separated by space.
-    :param graph_type: Undigraph or Digraph object
+    :param graph_type: EdgeWeightedGraph or DigrEdgeWeightedDigraphct
     :return: Graph object
     """
     g = graph_type(int(data[0]))
@@ -213,6 +213,26 @@ def edge_weight_graph_from_data(data: list, graph_type):
         edge_data = edge_str.split(' ')
         edges_repr = [int(edge_data[0]), int(edge_data[1]), float(edge_data[2])]
         edge = Edge(g.vertexes[edges_repr[0]], g.vertexes[edges_repr[1]], edges_repr[2])
+        g.add_edge(edge)
+
+    return g
+
+
+def edge_weight_digraph_from_data(data: list, graph_type):
+    """
+    Example of input data: ['13', '0 5 0.37', '4 3 1.2', '0 1 0.5', '9 12 1', '6 4 0.12', '5 4 0.12', '0 2 0.75']
+    :param data: List of strings.
+                 First string - number of vertexes in graph.
+                 All subsequent strings - pairs of vertexes' ids and wait of this edge separated by space.
+    :param graph_type: EdgeWeightedGraph or DigrEdgeWeightedDigraphct
+    :return: Graph object
+    """
+    g = graph_type(int(data[0]))
+
+    for edge_str in data[1:]:
+        edge_data = edge_str.split(' ')
+        edges_repr = [int(edge_data[0]), int(edge_data[1]), float(edge_data[2])]
+        edge = Diedge(g.vertexes[edges_repr[0]], g.vertexes[edges_repr[1]], edges_repr[2])
         g.add_edge(edge)
 
     return g
