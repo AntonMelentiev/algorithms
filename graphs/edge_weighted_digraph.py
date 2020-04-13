@@ -33,21 +33,30 @@ class EdgeWeightedDigraph:
         v1.adjacencies.append(edge)
 
 
-class DijkstraShortestPath:
-    def __init__(self, graph: EdgeWeightedDigraph, source_vertex: Vertex):
+class TopologicalSortEWD:
+    def __init__(self, graph: EdgeWeightedDigraph):
         self.graph = graph
-        self.source_vertex = source_vertex
-        self.edge_to = [None for _ in range(self.graph.vertexes_number)]
-        self.dist_to = [math.inf for _ in range(self.graph.vertexes_number)]
-        self.pq = IndexMinPriorityQueue()
+        self.marked = [False for _ in range(graph.vertexes_number)]
+        self.path = []
 
-        self.dist_to[self.source_vertex.id] = 0
-        self.pq.add_to_queue(self.source_vertex, 0)
+        for vertex in self.graph.vertexes:
+            if not self.marked[vertex.id]:
+                self.__depth_first_paths(vertex=vertex)
 
-        while not self.pq.is_empty():
-            vertex = self.pq.pop_min()
-            for edge in vertex.adjacencies:
-                self._relax(edge)
+    def __depth_first_paths(self, vertex):
+        self.marked[vertex.id] = True
+
+        for adj in self.graph.vertexes[vertex.id].adjacencies:
+            if not self.marked[adj.to_vertex().id]:
+                self.__depth_first_paths(adj.to_vertex())
+
+        self.path.insert(0, vertex)
+
+
+class ShortestPath:
+    source_vertex: Vertex
+    edge_to: list
+    dist_to: list
 
     def shortest_path_to(self, destination_vertex: Vertex):
         if destination_vertex == self.source_vertex:
@@ -65,6 +74,23 @@ class DijkstraShortestPath:
 
         return dist, path
 
+
+class DijkstraShortestPath(ShortestPath):
+    def __init__(self, graph: EdgeWeightedDigraph, source_vertex: Vertex):
+        self.graph = graph
+        self.source_vertex = source_vertex
+        self.edge_to = [None for _ in range(self.graph.vertexes_number)]
+        self.dist_to = [math.inf for _ in range(self.graph.vertexes_number)]
+        self.pq = IndexMinPriorityQueue()
+
+        self.dist_to[self.source_vertex.id] = 0
+        self.pq.add_to_queue(self.source_vertex, 0)
+
+        while not self.pq.is_empty():
+            vertex = self.pq.pop_min()
+            for edge in vertex.adjacencies:
+                self._relax(edge)
+
     def _relax(self, edge):
         v1 = edge.from_vertex()
         v2 = edge.to_vertex()
@@ -77,6 +103,30 @@ class DijkstraShortestPath:
                 self.pq.update_priority(v2, self.dist_to[v2.id])
             else:
                 self.pq.add_to_queue(v2, self.dist_to[v2.id])
+
+
+class TopologicalShortestPath(ShortestPath):
+    def __init__(self, graph: EdgeWeightedDigraph, source_vertex: Vertex):
+        self.graph = graph
+        self.source_vertex = source_vertex
+        self.edge_to = [None for _ in range(self.graph.vertexes_number)]
+
+        self.dist_to = [math.inf for _ in range(self.graph.vertexes_number)]
+        self.dist_to[self.source_vertex.id] = 0
+
+        t = TopologicalSortEWD(self.graph).path
+
+        for vertex in t:
+            for edge in vertex.adjacencies:
+                self._relax(edge)
+
+    def _relax(self, edge):
+        v1 = edge.from_vertex()
+        v2 = edge.to_vertex()
+
+        if self.dist_to[v2.id] > self.dist_to[v1.id] + edge.weight:
+            self.dist_to[v2.id] = self.dist_to[v1.id] + edge.weight
+            self.edge_to[v2.id] = edge
 
 
 if __name__ == '__main__':
@@ -104,11 +154,27 @@ if __name__ == '__main__':
 
     g = edge_weight_digraph_from_data(g_data, EdgeWeightedDigraph)
     print('-' * 50)
-    print(f'Edge weighted graph representation: \n{g}')
+    print(f'Edge weighted graph representation')
+    print('-' * 50)
+    print(g)
 
-    dsp_from = g.vertexes[0]
-    dsp_to = g.vertexes[6]
-    dsp = DijkstraShortestPath(g, dsp_from)
-    sp_dist, sp_path = dsp.shortest_path_to(dsp_to)
-    print(sp_dist)
-    print(sp_path)
+    print('-' * 50)
+    sp_from = g.vertexes[0]
+    sp_to = g.vertexes[6]
+
+    print(f'Dijkstra shortest path')
+    print('-' * 50)
+    dsp = DijkstraShortestPath(g, sp_from)
+    sp_dist, sp_path = dsp.shortest_path_to(sp_to)
+    print(f'Distance from {sp_from.id} to {sp_to.id}: {sp_dist}')
+    print(f'Path from {sp_from.id} to {sp_to.id}: {sp_path}')
+
+    print('\n' + '-' * 50)
+    print(f'Topological shortest path')
+    print('-' * 50)
+    topological = TopologicalSortEWD(g)
+    print(f'Topological sort from {sp_from.id}: {[v.id for v in topological.path]}')
+    tsp = TopologicalShortestPath(g, sp_from)
+    sp_dist, sp_path = tsp.shortest_path_to(sp_to)
+    print(f'Distance from {sp_from.id} to {sp_to.id}: {sp_dist}')
+    print(f'Path from {sp_from.id} to {sp_to.id}: {sp_path}')
