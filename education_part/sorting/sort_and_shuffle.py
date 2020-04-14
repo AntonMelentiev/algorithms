@@ -180,7 +180,7 @@ class SortAndShuffle:
 
 
 if __name__ == '__main__':
-    from common import is_sorted
+    from education_part.common import is_sorted
 
     def time_it(func, data: list):
         full_time = 0

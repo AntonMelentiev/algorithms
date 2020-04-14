@@ -1,4 +1,4 @@
-from graphs.graph import Graph, Vertex
+from education_part.graphs import Graph, Vertex
 
 
 class Undigraph(Graph):
@@ -61,7 +61,7 @@ class ConnectedComponents:
 
 
 if __name__ == '__main__':
-    from graphs.graph import graph_from_data, TypicalGraphProcessing, DepthFirstSearch, BreadthFirstSearch
+    from education_part.graphs import graph_from_data, TypicalGraphProcessing, DepthFirstSearch, BreadthFirstSearch
 
     # Vertex
     v = Vertex(0)

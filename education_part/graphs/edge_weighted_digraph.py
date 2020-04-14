@@ -1,7 +1,7 @@
 import math
 
-from data_structures.priority_queue import IndexMinPriorityQueue
-from graphs.graph import Vertex, Diedge
+from education_part.data_structures import IndexMinPriorityQueue
+from education_part.graphs import Vertex, Diedge
 
 
 class EdgeWeightedDigraph:
@@ -130,7 +130,7 @@ class TopologicalShortestPath(ShortestPath):
 
 
 if __name__ == '__main__':
-    from graphs.graph import edge_weight_digraph_from_data
+    from education_part.graphs import edge_weight_digraph_from_data
 
     g_data = [
         '8',

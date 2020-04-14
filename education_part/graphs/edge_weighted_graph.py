@@ -1,8 +1,8 @@
 from copy import copy
 
-from data_structures.priority_queue import MinPriorityQueue
-from graphs.graph import Vertex, Edge
-from connectivity.connectivity import QuickUnion
+from education_part.data_structures import MinPriorityQueue
+from education_part.graphs import Vertex, Edge
+from education_part.connectivity import QuickUnion
 
 
 class EdgeWeightedGraph:
@@ -109,7 +109,7 @@ class LazyPrimMST:
 
 
 if __name__ == '__main__':
-    from graphs.graph import edge_weight_graph_from_data
+    from education_part.graphs import edge_weight_graph_from_data
 
     g_data = [
         '8',

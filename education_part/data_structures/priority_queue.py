@@ -286,7 +286,7 @@ if __name__ == '__main__':
     import time
     from random import randint
 
-    from common import is_sorted
+    from education_part.common import is_sorted
 
     def fill_queue_from_list(queue: PriorityQueue, sequence):
         """
