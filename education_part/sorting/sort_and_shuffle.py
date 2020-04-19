@@ -1,5 +1,3 @@
-import time
-from copy import deepcopy
 from random import randint
 
 
@@ -180,25 +178,9 @@ class SortAndShuffle:
 
 
 if __name__ == '__main__':
-    from education_part.common import is_sorted
+    from copy import deepcopy
 
-    def time_it(func, data: list):
-        full_time = 0
-
-        for _ in range(10):
-            new_data = deepcopy(data)
-            start = time.time()
-            func(new_data)
-            end = time.time()
-            full_time += (end - start)
-
-            if not is_sorted(new_data):
-                print(f'"{func.__name__}" doesn\'t sorts list properly')
-
-        full_time /= 10
-        rounded_time = round(full_time, 5)
-        print(f'Rounded average time out of 10 executions of "{func.__name__}":'.ljust(70), end='')
-        print(f' {rounded_time} seconds')
+    from education_part.common import time_it
 
 
     def sort_scenario_1(a: int):
