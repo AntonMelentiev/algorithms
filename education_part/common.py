@@ -4,8 +4,8 @@ from copy import deepcopy
 
 def is_sorted(a: list):
     """
-    Check if elements in list in sorted order.
-    Implies that all items in list are compatible to each other.
+    Check if elements in the given list are in sorted order.
+    Implies that all items in the given list are compatible to each other.
     :param a: list
     :return: bool
     """
@@ -15,10 +15,10 @@ def is_sorted(a: list):
     return True
 
 
-def is_alphabetic(a: list):
+def is_alphabetic_first(a: list):
     """
-    Check if elements in list in alphabetic order by first letter.
-    Implies all items in list are strings.
+    Check if elements in the given list are in alphabetic order by first letter.
+    Implies all items in the given list are strings.
     :param a: list
     :return: bool
     """
@@ -28,7 +28,7 @@ def is_alphabetic(a: list):
     return True
 
 
-def time_it(func, data: list, check_sort: bool = True, check_alphabetic: bool = False):
+def time_it(func, data: list, check_sort: bool = True, check_alphabetic_first: bool = False):
     full_time = 0
 
     for _ in range(10):
@@ -42,8 +42,8 @@ def time_it(func, data: list, check_sort: bool = True, check_alphabetic: bool = 
             if not is_sorted(new_data):
                 print(f'"{func.__name__}" doesn\'t sorts list properly')
 
-        if check_alphabetic:
-            if not is_alphabetic(new_data):
+        if check_alphabetic_first:
+            if not is_alphabetic_first(new_data):
                 print(f'"{func.__name__}" doesn\'t in alphabetic order')
 
     full_time /= 10

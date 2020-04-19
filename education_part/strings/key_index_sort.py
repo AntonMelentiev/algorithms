@@ -39,6 +39,7 @@ if __name__ == '__main__':
     from education_part.common import time_it
 
     new_arr = ['foo', 'bar', 'test', 'alpha', 'best', 'floor', 'feed']
+    print(new_arr)
     KeyIndexSort(new_arr)
     print(new_arr)
 
@@ -69,5 +70,8 @@ if __name__ == '__main__':
         print(list_to_sort + ':')
         for func in funcs:
             data = deepcopy(lists[list_to_sort])
-            time_it(func, data, check_sort=False, check_alphabetic=True)
+            time_it(func, data, check_sort=False, check_alphabetic_first=True)
     print('--- ' * 22)
+
+    KeyIndexSort(unique_items)
+    print(unique_items)
