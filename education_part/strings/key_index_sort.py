@@ -1,7 +1,7 @@
 class KeyIndexSort:
     """
     Get a list of strings.
-    Sort them in alphabetic sequence.
+    Sort them in alphabetic sequence by first letter.
     """
     def __init__(self, arr):
         self.arr = arr
